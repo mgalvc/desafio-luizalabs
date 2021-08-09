@@ -1,7 +1,7 @@
 import { IClient } from "../models/client.model";
 import ClientRepository from "../repositories/client.repository";
-import GeneralResponse from "../response-builders/general.response";
 import ProductService from "../services/product.service";
+import GeneralResponser from "./responsers/general.responser";
 
 export default class ClientAction {
   constructor(
@@ -11,12 +11,12 @@ export default class ClientAction {
   
   async create(name: string, email: string) {
     await this.clientRepository.add({ name, email });
-    return GeneralResponse.successResponse();
+    return GeneralResponser.successResponse();
   }
 
   async list() {
     const clients = await this.clientRepository.list();
-    return GeneralResponse.successResponse(clients);
+    return GeneralResponser.successResponse(clients);
   }
 
   async get(id: string) {
@@ -29,16 +29,16 @@ export default class ClientAction {
     }
     
     client.wishlist = wishlistDetails;
-    return GeneralResponse.successResponse(client);
+    return GeneralResponser.successResponse(client);
   }
 
   async update(id: string, data: IClient) {
     await this.clientRepository.update(id, data);
-    return GeneralResponse.successResponse();
+    return GeneralResponser.successResponse();
   }
 
   async delete(id: string) {
     await this.clientRepository.delete(id);
-    return GeneralResponse.successResponse();
+    return GeneralResponser.successResponse();
   }
 }
