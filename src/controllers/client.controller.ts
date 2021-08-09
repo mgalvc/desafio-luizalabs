@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import ClientAction from "../actions/client.action";
+import RequestResponser from "./responsers/request.responser";
 
 export default class ClientController {
   constructor(
@@ -7,42 +8,52 @@ export default class ClientController {
   ) {}
 
   async list(req: Request, res: Response) {
-    const clients = await this.clientAction.list();
-    return res.json(clients);
+    try {
+      const result = await this.clientAction.list();
+      return RequestResponser.handleSuccess(res, result);
+    } catch (error) {
+      return RequestResponser.handleError(res, error);
+    }
   }
 
   async get(req: Request, res: Response) {
-    const { id } = req.params;
-    const client = await this.clientAction.get(id);
-    return res.json(client)
+    try {
+      const { id } = req.params;
+      const result = await this.clientAction.get(id);
+      return RequestResponser.handleSuccess(res, result);
+    } catch (error) {
+      return RequestResponser.handleError(res, error);
+    }
   }
 
   async create(req: Request, res: Response) {
-    const { name, email } = req.body;
-
     try {
+      const { name, email } = req.body;
       const result = await this.clientAction.create(name, email);
-      return res.status(201).json(result);
+      return RequestResponser.handleSuccess(res, result);
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return RequestResponser.handleError(res, error);
     }
   }
 
   async update(req: Request, res: Response) {
-    const { id } = req.params;
-    const { name, email } = req.body;
-
     try {
+      const { id } = req.params;
+      const { name, email } = req.body;
       const result = await this.clientAction.update(id, { name, email });
-      return res.status(200).json(result)
+      return RequestResponser.handleSuccess(res, result);
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return RequestResponser.handleError(res, error);
     }
   }
 
   async delete(req: Request, res: Response) {
-    const { id } = req.params;
-    const result = await this.clientAction.delete(id);
-    return res.status(200).json(result);
+    try {
+      const { id } = req.params;
+      const result = await this.clientAction.delete(id);
+      return RequestResponser.handleSuccess(res, result);
+    } catch (error) {
+      return RequestResponser.handleError(res, error);
+    }
   }
 }

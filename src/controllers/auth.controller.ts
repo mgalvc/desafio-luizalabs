@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import AuthAction from '../actions/auth.action';
-import NotFoundError from '../exceptions/not-found.error';
+import RequestResponser from './responsers/request.responser';
 
 export default class UserController {
   constructor(
@@ -8,18 +8,12 @@ export default class UserController {
   ) {}
   
   async authenticate(req: Request, res: Response) {
-    const { username, password } = req.body;
-
     try {
-      const response = await this.authAction.authenticate(username, password);
-      return res.json(response);
+      const { username, password } = req.body;
+      const result = await this.authAction.authenticate(username, password);
+      return RequestResponser.handleSuccess(res, result)
     } catch (error) {
-      if(error instanceof NotFoundError) {
-        return res.status(401).json(error);
-      }
-
-      return res.sendStatus(500);
+      return RequestResponser.handleError(res, error);
     }
-
   }
 }
