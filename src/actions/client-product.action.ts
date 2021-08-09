@@ -1,4 +1,4 @@
-import BadRequestError from "../exceptions/bad-request.errot";
+import BadRequestError from "../exceptions/bad-request.error";
 import NotFoundError from "../exceptions/not-found.error";
 import ClientRepository from "../repositories/client.repository";
 import ProductService from "../services/product.service";
@@ -17,7 +17,7 @@ export default class ClientProductAction {
       return GeneralResponser.successResponse();
     } catch (err) {
       if (err instanceof NotFoundError) {
-        throw new BadRequestError('Produto não encontrado');
+        throw new BadRequestError(err.message);
       }
 
       throw err;

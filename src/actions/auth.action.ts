@@ -1,7 +1,7 @@
 import UserRepository from "../repositories/user.repository";
 import { sign } from 'jsonwebtoken';
 import configs from "../configs/configs";
-import NotFoundError from "../exceptions/not-found.error";
+import BadRequestError from "../exceptions/bad-request.error";
 import AuthResponser from "./responsers/auth.responser";
 
 export default class AuthAction {
@@ -13,7 +13,7 @@ export default class AuthAction {
     const { role, id, password } = await this.userRepository.get(username);
 
     if(password !== sentPassword) {
-      throw new NotFoundError('Invalid credentials');
+      throw new BadRequestError('Credenciais inválidas');
     }
 
     const token = sign(

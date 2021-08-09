@@ -17,11 +17,8 @@ export default class ProductService {
         return JSON.parse(cachedProduct);
       }
 
-      const apiResponse = await axios.get(`${this.apiUrl}/${productId}/`);
-      
-      const product = apiResponse.data;
+      const { data: product } = await axios.get(`${this.apiUrl}/${productId}/`);
       this.redisService.set(productId, JSON.stringify(product), configs.redisProductTtl());
-      
       return product;
     } catch (err) {
       if (err.response?.status == 404) {

@@ -30,7 +30,7 @@ export default class UserRepository implements RepositoryInterface<User> {
     });
 
     if(!user) {
-      throw new NotFoundError('Invalid credentials');
+      throw new NotFoundError('Usuário não encontrado');
     }
 
     return user;
