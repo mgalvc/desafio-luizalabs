@@ -2,6 +2,7 @@ import UserRepository from "../repositories/user.repository";
 import { sign } from 'jsonwebtoken';
 import configs from "../configs/configs";
 import NotFoundError from "../exceptions/not-found.error";
+import AuthResponse from "../response-builders/auth.response";
 
 export default class AuthAction {
   public constructor(
@@ -21,6 +22,6 @@ export default class AuthAction {
       { expiresIn: configs.jwtTtl() }
     );
     
-    return { success: true, token } 
+    return AuthResponse.successResponse(token);
   }
 }
