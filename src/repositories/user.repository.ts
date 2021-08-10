@@ -1,44 +1,81 @@
+import BadRequestError from "../exceptions/bad-request.error";
 import NotFoundError from "../exceptions/not-found.error";
+import { IUser, UserModel } from "../models/user.model";
 import RepositoryInterface from "./repository.interface";
+import configs from '../configs/configs';
 
-const usersCollection: User[] = [
-  { id: 1, username: 'admin', password: 'admin#123456', role: 'admin' },
-  { id: 2, username: 'guest', password: 'guest#123456', role: 'guest' }
-];
+export default class UserRepository implements RepositoryInterface<IUser> {
+  async add(entity: IUser) {
+    try {
+      if(entity.username === configs.rootUser()) {
+        throw new BadRequestError('Username inválido');
+      }
 
-export default class UserRepository implements RepositoryInterface<User> {
-  add(entity: User): void {
-    throw new Error("Method not implemented.");
+      await UserModel.create(entity);
+    } catch (error) {
+      if(error.code === 11000) {
+        throw new BadRequestError('Username já está sendo utilizado');
+      }
+      
+      throw error;
+    }
   }
   
-  list(): Promise<User[]> {
-    throw new Error("Method not implemented.");
+  async list(): Promise<IUser[]> {
+    return UserModel.find({}, { _id: 1, username: 1, role: 1 });
   }
   
-  delete(id: string | number): Promise<void> {
-    throw new Error("Method not implemented.");
+  async delete(id: string | number): Promise<void> {
+    const entity = await UserModel.findByIdAndDelete(id).exec();
+    
+    if(!entity) {
+      throw new NotFoundError('Usuário não encontrado');
+    }
   }
   
-  update(id: string | number, entity: User): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  
-  async get(id: string) {
-    const user = usersCollection.find(({ username }) => {
-      return username === id;
-    });
+  async update(id: string | number, entity: IUser): Promise<void> {
+    try {
+      if(entity.username === configs.rootUser()) {
+        throw new BadRequestError('Username inválido');
+      }
 
-    if(!user) {
+      const updated = await UserModel.findByIdAndUpdate(id, entity).exec();
+
+      if(!updated) {
+        throw new NotFoundError('Usuário não encontrado');
+      }
+    } catch (error) {
+      if(error.code === 11000) {
+        throw new BadRequestError('Username já está sendo utilizado');
+      }
+      
+      throw error;
+    }
+  }
+  
+  async get(id: string, isAuth=false): Promise<IUser> {
+    if(isAuth && id === configs.rootUser()) {
+      return { 
+        username: id,
+        password: configs.rootPass(),
+        role: 'admin'
+      }
+    }
+
+    let query: any = { _id: id };
+    const projection: any = { _id: 1, username: 1, role: 1 };
+    
+    if(isAuth) {
+      projection.password = 1;
+      query = { username: id };
+    }
+
+    const entity = await UserModel.findOne(query, projection).exec();
+
+    if(!entity) {
       throw new NotFoundError('Usuário não encontrado');
     }
 
-    return user;
+    return entity;
   }
-}
-
-interface User {
-  id: number;
-  username: string; 
-  password: string;
-  role: string;
 }

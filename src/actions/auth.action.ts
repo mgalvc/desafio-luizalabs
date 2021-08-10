@@ -10,14 +10,14 @@ export default class AuthAction {
   ) {}
 
   async authenticate(username: string, sentPassword: string) {
-    const { role, id, password } = await this.userRepository.get(username);
+    const { password, role } = await this.userRepository.get(username, true);
 
     if(password !== sentPassword) {
       throw new BadRequestError('Credenciais inválidas');
     }
 
     const token = sign(
-      { role, id }, 
+      { role, username }, 
       configs.jwtSecret(), 
       { expiresIn: configs.jwtTtl() }
     );
