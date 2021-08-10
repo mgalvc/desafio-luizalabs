@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec ts-node-transpile-only -r dotenv/config ./src/app.ts dotenv_config_path=.env"
+    "dev": "nodemon --exec ts-node -r dotenv/config ./src/app.ts dotenv_config_path=.env",
+    "build": "tsc",
+    "prod": "node -r dotenv/config ./dist/app.js dotenv_config_path=.env"
   },
   "author": "",
   "license": "ISC",
