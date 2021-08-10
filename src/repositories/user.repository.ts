@@ -3,18 +3,19 @@ import NotFoundError from "../exceptions/not-found.error";
 import { IUser, UserModel } from "../models/user.model";
 import RepositoryInterface from "./repository.interface";
 import configs from '../configs/configs';
+import messagesUtil from "../utils/messages.util";
 
 export default class UserRepository implements RepositoryInterface<IUser> {
   async add(entity: IUser) {
     try {
       if(entity.username === configs.rootUser()) {
-        throw new BadRequestError('Username inválido');
+        throw new BadRequestError(messagesUtil.INVALID_USERNAME);
       }
 
       await UserModel.create(entity);
     } catch (error) {
       if(error.code === 11000) {
-        throw new BadRequestError('Username já está sendo utilizado');
+        throw new BadRequestError(messagesUtil.UNAVAILABLE_USERNAME);
       }
       
       throw error;
@@ -41,7 +42,7 @@ export default class UserRepository implements RepositoryInterface<IUser> {
     const entity = await UserModel.findOne(query, projection).exec();
 
     if(!entity) {
-      throw new NotFoundError('Usuário não encontrado');
+      throw new NotFoundError(messagesUtil.USER_NOT_FOUND);
     }
 
     return entity;
@@ -54,17 +55,17 @@ export default class UserRepository implements RepositoryInterface<IUser> {
   async update(id: string | number, entity: IUser): Promise<void> {
     try {
       if(entity.username === configs.rootUser()) {
-        throw new BadRequestError('Username inválido');
+        throw new BadRequestError(messagesUtil.INVALID_USERNAME);
       }
 
       const updated = await UserModel.findByIdAndUpdate(id, entity).exec();
 
       if(!updated) {
-        throw new NotFoundError('Usuário não encontrado');
+        throw new NotFoundError(messagesUtil.USER_NOT_FOUND);
       }
     } catch (error) {
       if(error.code === 11000) {
-        throw new BadRequestError('Username já está sendo utilizado');
+        throw new BadRequestError(messagesUtil.UNAVAILABLE_USERNAME);
       }
       
       throw error;
@@ -75,7 +76,7 @@ export default class UserRepository implements RepositoryInterface<IUser> {
     const entity = await UserModel.findByIdAndDelete(id).exec();
     
     if(!entity) {
-      throw new NotFoundError('Usuário não encontrado');
+      throw new NotFoundError(messagesUtil.USER_NOT_FOUND);
     }
   }
 }
