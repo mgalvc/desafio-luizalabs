@@ -1,0 +1,549 @@
+openapi: 3.0.1
+info:
+  title: Desafio Luizalabs
+  description: 'Serviço para gerenciamento da lista de produtos favoritos dos clientes.'
+  contact:
+    email: matheusgcorreia@gmail.com
+  license:
+    name: GNU General Public License v3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.pt-br.html
+  version: 1.0.0
+tags:
+- name: auth
+  description: Autenticação
+- name: user
+  description: Gerenciamento de usuários do serviço
+- name: client
+  description: Gerenciamento de clientes e seus produtos favoritos
+paths:
+  /auth:
+    post:
+      tags:
+      - auth
+      summary: Realiza autenticação
+      description: "O token gerado deverá ser utilizado no cabeçalho 'Authorization' para todas as requisições seguintes, no formato: 'Bearer {token}'."
+      operationId: auth
+      requestBody:
+        description: Credenciais do usuário
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Auth'
+        required: true
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  token: "string"
+        400:
+          description: Erro na operação
+          content:
+            application/json:
+              example:
+                message: "Credenciais inválidas"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+  /user:
+    get:
+      tags:
+      - user
+      summary: Exibe lista de usuários
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: getUsers
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+                data: [
+                  {
+                    _id: "1",
+                    username: "username1",
+                    role: "admin"
+                  },
+                  {
+                    _id: "2",
+                    username: "username2",
+                    role: "guest"
+                  }
+                ]
+        403:
+          description: Operação não permitida
+          content:
+            application/json:
+              example:
+                message: "You are not allowed to perform this action"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+    post:
+      tags:
+      - user
+      summary: Cria usuário
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: createUser
+      requestBody:
+        description: Dados do usuário
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PostUser'
+        required: true
+      responses:
+        201:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+        400:
+          description: Erro na operação
+          content:
+            application/json:
+              example:
+                message: "Username já está sendo utilizado"
+        403:
+          description: Operação não permitida
+          content:
+            application/json:
+              example:
+                message: "You are not allowed to perform this action"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+  /user/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: 'ID do usuário'
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+      - user
+      summary: Exibe detalhes do usuário
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: getUser
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  _id: "1"
+                  username: "username1"
+                  role: "admin"
+        403:
+          description: Operação não permitida
+          content:
+            application/json:
+              example:
+                message: "You are not allowed to perform this action"
+        404:
+          description: Usuário não encontrado
+          content:
+            application/json:
+              example:
+                message: "Usuário não encontrado"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+    put:
+      tags:
+      - user
+      summary: Atualiza usuário
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: updateUser
+      requestBody:
+        description: Dados do usuário
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PostUser'
+        required: true
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+        400:
+          description: Erro na operação
+          content:
+            application/json:
+              example:
+                message: "Username já está sendo utilizado"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+    delete:
+      tags:
+      - user
+      summary: Remove usuário
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: deleteUser
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+        404:
+          description: Erro na operação
+          content:
+            application/json:
+              example:
+                message: "Usuário não encontrado"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+  /client:
+    get:
+      tags:
+      - client
+      summary: Exibe lista de clientes
+      description: Ação realizada apenas por usuários logados e com perfil admin e guest.
+      operationId: getClients
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+                data: [
+                  {
+                    _id: "string",
+                    name: "string",
+                    email: "string"
+                  },
+                  {
+                    _id: "string",
+                    name: "string",
+                    email: "string"
+                  }
+                ]
+        403:
+          description: Operação não permitida
+          content:
+            application/json:
+              example:
+                message: "You are not allowed to perform this action"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+    post:
+      tags:
+      - client
+      summary: Cria usuário
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: createClient
+      requestBody:
+        description: Dados do usuário
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PostClient'
+        required: true
+      responses:
+        201:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+        400:
+          description: Erro na operação
+          content:
+            application/json:
+              example:
+                message: "Email já está sendo utilizado"
+        403:
+          description: Operação não permitida
+          content:
+            application/json:
+              example:
+                message: "You are not allowed to perform this action"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+  /client/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: 'ID do cliente'
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+      - client
+      summary: Exibe detalhes do cliente
+      description: Ação realizada apenas por usuários logados e com perfil admin e guest.
+      operationId: getClient
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  _id: "string"
+                  name: "string"
+                  email: "email"
+                  wishlist: [
+                    {
+                      "reviewScore": 1,
+                      "title": "string",
+                      "price": 1,
+                      "brand": "string",
+                      "id": "string",
+                      "image": "string"
+                    }
+                  ]
+        404:
+          description: Cliente não encontrado
+          content:
+            application/json:
+              example:
+                message: "Cliente não encontrado"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+    put:
+      tags:
+      - client
+      summary: Atualiza cliente
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: updateClient
+      requestBody:
+        description: Dados do cliente
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PostClient'
+        required: true
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+        400:
+          description: Erro na operação
+          content:
+            application/json:
+              example:
+                message: "Email já está sendo utilizado"
+        404:
+          description: Cliente não encontrado
+          content:
+            application/json:
+              example:
+                message: "Cliente não encontrado"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+    delete:
+      tags:
+      - client
+      summary: Remove cliente
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: deleteClient
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+        403:
+          description: Operação não permitida
+          content:
+            application/json:
+              example:
+                message: "You are not allowed to perform this action"
+        404:
+          description: Erro na operação
+          content:
+            application/json:
+              example:
+                message: "Usuário não encontrado"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+  /client/{id}/product:
+    parameters:
+      - name: id
+        in: path
+        description: 'ID do cliente'
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+      - client
+      summary: Insere produto na lista de favoritos do cliente
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: creatwClientProduct
+      requestBody:
+        description: Dados do produto
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PostProduct'
+        required: true
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+        400:
+          description: Erro na operação
+          content:
+            application/json:
+              example:
+                message: "Produto não encontrado"
+        403:
+          description: Operação não permitida
+          content:
+            application/json:
+              example:
+                message: "You are not allowed to perform this action"
+        404:
+          description: Cliente não encontrado
+          content:
+            application/json:
+              example:
+                message: "Cliente não encontrado"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+  /client/{id}/product/{productId}:
+    parameters:
+      - name: id
+        in: path
+        description: 'ID do cliente'
+        required: true
+        schema:
+          type: string
+      - name: productId
+        in: path
+        description: 'ID do produto'
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+      - client
+      summary: Remove produto do cliente
+      description: Ação realizada apenas por usuários logados e com perfil admin.
+      operationId: deleteClientProduct
+      responses:
+        200:
+          description: Sucesso na operação
+          content:
+            application/json:
+              example:
+                success: true
+        403:
+          description: Operação não permitida
+          content:
+            application/json:
+              example:
+                message: "You are not allowed to perform this action"
+        404:
+          description: Erro na operação
+          content:
+            application/json:
+              example:
+                message: "Cliente não encontrado"
+        500:
+          description: Erro inesperado
+          content:
+            application/json:
+              example:
+                message: "Ocorreu um erro inesperado"
+components:
+  schemas:
+    Auth:
+      type: object
+      properties:
+        username:
+          type: string
+        password: 
+          type: string
+    PostUser:
+      type: object
+      properties:
+        username:
+          type: string
+        password: 
+          type: string
+        role:
+          type: string
+          enum: ['admin', 'guest']
+    PostClient:
+      type: object
+      properties:
+        name:
+          type: string
+        email: 
+          type: string
+    PostProduct:
+      type: object
+      properties:
+        productId:
+          type: string
