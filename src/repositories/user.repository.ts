@@ -1,5 +1,4 @@
 import NotFoundError from "../exceptions/not-found.error";
-import { UserNotFound } from "../exceptions/user.exception";
 import RepositoryInterface from "./repository.interface";
 
 const usersCollection: User[] = [
