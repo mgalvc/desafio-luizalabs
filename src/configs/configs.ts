@@ -7,5 +7,7 @@ export default {
   mongoHost: () => process.env.MONGO_HOST,
   productsApiUrl: () => process.env.PRODUCTS_API_URL,
   rootUser: () => process.env.ROOT_USER,
-  rootPass: () => process.env.ROOT_PASS
+  rootPass: () => process.env.ROOT_PASS,
+  logLevel: () => process.env.LOG_LEVEL || 'debug',
+  port: () => process.env.PORT || 3000
 };

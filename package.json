@@ -27,6 +27,7 @@
     "express-validator": "^6.12.1",
     "ioredis": "^4.27.7",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.13.5"
+    "mongoose": "^5.13.5",
+    "winston": "^3.3.3"
   }
 }
