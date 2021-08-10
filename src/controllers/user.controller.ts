@@ -30,7 +30,7 @@ export default class UserController {
     try {
       const { username, password, role } = req.body;
       const result = await this.userAction.create(username, password, role);
-      return RequestResponser.handleSuccess(res, result);
+      return RequestResponser.handleSuccess(res, result, 201);
     } catch (error) {
       return RequestResponser.handleError(res, error);
     }

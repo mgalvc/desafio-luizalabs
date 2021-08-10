@@ -30,7 +30,7 @@ export default class ClientController {
     try {
       const { name, email } = req.body;
       const result = await this.clientAction.create(name, email);
-      return RequestResponser.handleSuccess(res, result);
+      return RequestResponser.handleSuccess(res, result, 201);
     } catch (error) {
       return RequestResponser.handleError(res, error);
     }
