@@ -7,6 +7,10 @@ export default (allowedRoles: string[]) => {
     const { authorization } = req.headers;
     
     try {
+      if(!authorization) {
+        return res.status(401).json({ message: 'Invalid token' }); 
+      }
+
       const [_, token] = authorization.split(' ');
       const { role } = verify(token, configs.jwtSecret(), { ignoreExpiration: false }) as any;
       

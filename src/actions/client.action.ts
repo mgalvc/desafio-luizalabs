@@ -21,9 +21,10 @@ export default class ClientAction {
 
   async get(id: string) {
     const client = await this.clientRepository.get(id);
+    const { wishlist } = client;
     const wishlistDetails = [];
-    
-    for (const productId of client.wishlist) {
+
+    for (const productId of wishlist || []) {
       const product = await this.productService.getProductDetails(productId);
       wishlistDetails.push(product)
     }
