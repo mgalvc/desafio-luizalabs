@@ -24,11 +24,12 @@ export default class ClientRepository implements RepositoryInterface<IClient> {
       throw new NotFoundError(messagesUtil.CLIENT_NOT_FOUND);
     }
 
-    return entity;
+    return entity.toObject();
   }
   
   async list(): Promise<IClient[]> {
-    return ClientModel.find({}, { _id: 1, name: 1, email: 1 });
+    const entities = await ClientModel.find({}, { _id: 1, name: 1, email: 1 });
+    return entities.map(entity => entity.toObject());
   }
   
   async update(id: string | number, entity: IClient): Promise<void> {

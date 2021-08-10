@@ -45,7 +45,7 @@ export default class UserRepository implements RepositoryInterface<IUser> {
       throw new NotFoundError(messagesUtil.USER_NOT_FOUND);
     }
 
-    return entity;
+    return entity.toObject();
   }
   
   async list(): Promise<IUser[]> {
