@@ -1,0 +1,15 @@
+{
+  "roots": ["<rootDir>/tests"],
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "**/src/**/*.ts",
+    "!**/src/configs/*.ts",
+    "!**/src/utils/logger.util.ts"
+  ],
+  "coverageDirectory": "./coverage",
+  "preset": "ts-jest",
+  "resetMocks": true,
+  "transform": {
+    ".+\\.ts$": "ts-jest"
+  }
+}
