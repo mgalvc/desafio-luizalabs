@@ -4,6 +4,18 @@ import { ClientModel, IClient } from "../models/client.model";
 import NotFoundError from "../exceptions/not-found.error";
 
 export default class ClientRepository implements RepositoryInterface<IClient> {
+  async add(entity: IClient) {
+    try {
+      await ClientModel.create(entity);
+    } catch (error) {
+      if(error.code === 11000) {
+        throw new BadRequestError('E-mail já está sendo utilizado');
+      }
+      
+      throw error;
+    }
+  }
+
   async get(id: string | number): Promise<IClient> {
     const entity = await ClientModel.findById(id, { _id: 1, name: 1, email: 1, wishlist: 1 }).exec();
 
@@ -16,14 +28,6 @@ export default class ClientRepository implements RepositoryInterface<IClient> {
   
   async list(): Promise<IClient[]> {
     return ClientModel.find({}, { _id: 1, name: 1, email: 1 });
-  }
-  
-  async delete(id: string | number): Promise<void> {
-    const entity = await ClientModel.findByIdAndDelete(id).exec();
-    
-    if(!entity) {
-      throw new NotFoundError('Cliente não encontrado');
-    }
   }
   
   async update(id: string | number, entity: IClient): Promise<void> {
@@ -41,16 +45,12 @@ export default class ClientRepository implements RepositoryInterface<IClient> {
       throw error;
     }
   }
-  
-  async add(entity: IClient) {
-    try {
-      await ClientModel.create(entity);
-    } catch (error) {
-      if(error.code === 11000) {
-        throw new BadRequestError('E-mail já está sendo utilizado');
-      }
-      
-      throw error;
+
+  async delete(id: string | number): Promise<void> {
+    const entity = await ClientModel.findByIdAndDelete(id).exec();
+    
+    if(!entity) {
+      throw new NotFoundError('Cliente não encontrado');
     }
   }
 
