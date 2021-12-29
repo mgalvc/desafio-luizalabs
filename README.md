@@ -1,4 +1,4 @@
-# Desafio Luizalabs
+# Desafio Wishlist
 
 Serviço para gerenciamento da lista de produtos favoritos dos clientes.
 
